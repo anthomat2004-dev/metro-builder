@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Opening Metro Builder...</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #0f0f0f;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    main {
+      width: min(520px, calc(100% - 40px));
+      padding: 32px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    p {
+      margin: 8px 0;
+      color: #bdbdbd;
+    }
+
+    button {
+      margin-top: 20px;
+      border: 0;
+      border-radius: 8px;
+      padding: 13px 20px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 id="title">Opening Metro Builder...</h1>
+    <p id="status">Launching Roblox.</p>
+    <button id="openButton" hidden>Open Roblox</button>
+  </main>
+
+  <script>
+    (() => {
+      const PLACE_ID = "140473283529865";
+
+      const parts = window.location.pathname
+        .split("/")
+        .filter(Boolean);
+
+      const title = document.getElementById("title");
+      const status = document.getElementById("status");
+      const button = document.getElementById("openButton");
+
+      // Expected:
+      // https://metro-builder.fr/play/ABC123
+      if (
+        parts.length === 2 &&
+        parts[0].toLowerCase() === "play"
+      ) {
+        const mapId = parts[1];
+
+        if (!/^[A-Za-z0-9_-]{1,100}$/.test(mapId)) {
+          window.location.replace("/404/");
+          return;
+        }
+
+        const robloxUrl =
+          "roblox://placeId=" +
+          encodeURIComponent(PLACE_ID) +
+          "&launchData=" +
+          encodeURIComponent(mapId);
+
+        button.hidden = false;
+        button.addEventListener("click", () => {
+          window.location.href = robloxUrl;
+        });
+
+        window.location.href = robloxUrl;
+
+        setTimeout(() => {
+          status.textContent =
+            "If Roblox did not open automatically, click the button below.";
+        }, 1500);
+
+        return;
+      }
+
+      // Any other missing route goes to the real /404 page.
+      window.location.replace("/404/");
+    })();
+  </script>
+</body>
+</html>
