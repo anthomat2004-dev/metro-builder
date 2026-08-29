@@ -56,10 +56,6 @@
     (() => {
       const PLACE_ID = "140473283529865";
 
-      // GitHub project site:
-      // https://anthomat2004-dev.github.io/metro-builder/
-      // Custom domain later:
-      // https://metro-builder.fr/
       let basePath = "";
 
       if (window.location.hostname.endsWith("github.io")) {
@@ -77,8 +73,6 @@
         .split("/")
         .filter(Boolean);
 
-      // Expected:
-      // /play/ABC123
       if (
         parts.length === 2 &&
         parts[0].toLowerCase() === "play"
@@ -98,24 +92,49 @@
 
         const button = document.getElementById("openButton");
         const status = document.getElementById("status");
+        const title = document.getElementById("title");
 
         button.hidden = false;
+
+        const tryClose = () => {
+          try {
+            window.open("", "_self");
+            window.close();
+          } catch (e) {}
+
+          setTimeout(() => {
+            title.textContent = "Metro Builder opened";
+            status.textContent = "You can close this tab.";
+          }, 300);
+        };
+
         button.addEventListener("click", () => {
           window.location.href = robloxUrl;
+
+          setTimeout(() => {
+            tryClose();
+          }, 1400);
         });
 
-        // Try automatically
+        // Automatic launch attempt.
         window.location.href = robloxUrl;
 
+        // Attempt to close shortly after Roblox is launched.
         setTimeout(() => {
-          status.textContent =
-            "If Roblox did not open automatically, click the button below.";
-        }, 1500);
+          tryClose();
+        }, 1400);
+
+        // If the custom protocol was blocked, keep a manual fallback button.
+        setTimeout(() => {
+          if (!document.hidden) {
+            status.textContent =
+              "If Roblox did not open automatically, click the button below.";
+          }
+        }, 2200);
 
         return;
       }
 
-      // Anything else goes to the real 404 page.
       window.location.replace(basePath + "/404/");
     })();
   </script>
