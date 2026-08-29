@@ -13,7 +13,7 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      background: #0f0f0f;
+      background: #111;
       color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
@@ -31,14 +31,14 @@
 
     p {
       margin: 8px 0;
-      color: #bdbdbd;
+      color: #bbb;
     }
 
     button {
       margin-top: 20px;
+      padding: 13px 20px;
       border: 0;
       border-radius: 8px;
-      padding: 13px 20px;
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
@@ -56,16 +56,29 @@
     (() => {
       const PLACE_ID = "140473283529865";
 
-      const parts = window.location.pathname
+      // GitHub project site:
+      // https://anthomat2004-dev.github.io/metro-builder/
+      // Custom domain later:
+      // https://metro-builder.fr/
+      let basePath = "";
+
+      if (window.location.hostname.endsWith("github.io")) {
+        basePath = "/metro-builder";
+      }
+
+      const path = window.location.pathname;
+
+      const relativePath =
+        basePath && path.startsWith(basePath)
+          ? path.slice(basePath.length)
+          : path;
+
+      const parts = relativePath
         .split("/")
         .filter(Boolean);
 
-      const title = document.getElementById("title");
-      const status = document.getElementById("status");
-      const button = document.getElementById("openButton");
-
       // Expected:
-      // https://metro-builder.fr/play/ABC123
+      // /play/ABC123
       if (
         parts.length === 2 &&
         parts[0].toLowerCase() === "play"
@@ -73,7 +86,7 @@
         const mapId = parts[1];
 
         if (!/^[A-Za-z0-9_-]{1,100}$/.test(mapId)) {
-          window.location.replace("/404/");
+          window.location.replace(basePath + "/404/");
           return;
         }
 
@@ -83,11 +96,15 @@
           "&launchData=" +
           encodeURIComponent(mapId);
 
+        const button = document.getElementById("openButton");
+        const status = document.getElementById("status");
+
         button.hidden = false;
         button.addEventListener("click", () => {
           window.location.href = robloxUrl;
         });
 
+        // Try automatically
         window.location.href = robloxUrl;
 
         setTimeout(() => {
@@ -98,8 +115,8 @@
         return;
       }
 
-      // Any other missing route goes to the real /404 page.
-      window.location.replace("/404/");
+      // Anything else goes to the real 404 page.
+      window.location.replace(basePath + "/404/");
     })();
   </script>
 </body>
